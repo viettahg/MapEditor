@@ -1,0 +1,34 @@
+{
+  "scripts": {
+    "start": "webpack-dev-server --progress --hot --open",
+    "start-local": "webpack-dev-server --env.local --progress --hot --open"
+  },
+  "dependencies": {
+    "@deck.gl/core": "8.8.17",
+    "@deck.gl/layers": "8.8.17",
+    "@deck.gl/react": "8.8.17",
+    "@luma.gl/constants": "8.5.16",
+    "@luma.gl/core": "8.5.16",
+    "@luma.gl/webgl": "8.5.16",
+    "nebula.gl": "^1.0.4",
+    "@nebula.gl/edit-modes": "^1.0.4",
+    "@nebula.gl/layers": "^1.0.4",
+    "nebula.gl-react": "^0.5.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-map-gl": "^5.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-export-default-from": "^7.8.3",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "7.9.0",
+    "babel-loader": "^8.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.3.0",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.11"
+  }
+}

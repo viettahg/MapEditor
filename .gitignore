@@ -1,0 +1,25 @@
+**/dist/*
+**/dist-esm/*
+**/dist-es6/*
+**/dist-types/*
+
+node_modules/
+coverage/
+.nyc_output/
+.npmrc
+
+*.log
+
+# editor files
+.project
+.DS_Store
+.idea
+*.zip
+*.rar
+.vscode
+
+# copied as part of a build step
+modules/main/README.md
+modules/edit-modes/README.md
+modules/editor/README.md
+modules/layers/README.md

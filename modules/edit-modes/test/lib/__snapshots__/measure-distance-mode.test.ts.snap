@@ -1,0 +1,279 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`one click + pointer move guides are two points + line string 1`] = `
+Object {
+  "features": Array [
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          Array [
+            1,
+            2,
+          ],
+          Array [
+            3,
+            4,
+          ],
+        ],
+        "type": "LineString",
+      },
+      "properties": Object {
+        "guideType": "tentative",
+      },
+      "type": "Feature",
+    },
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          1,
+          2,
+        ],
+        "type": "Point",
+      },
+      "properties": Object {
+        "editHandleType": "existing",
+        "featureIndex": -1,
+        "guideType": "editHandle",
+        "positionIndexes": Array [
+          0,
+        ],
+      },
+      "type": "Feature",
+    },
+  ],
+  "type": "FeatureCollection",
+}
+`;
+
+exports[`one click + pointer move tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+]
+`;
+
+exports[`one click guides are a single point 1`] = `
+Object {
+  "features": Array [
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          Array [
+            1,
+            2,
+          ],
+          Array [
+            1,
+            2,
+          ],
+        ],
+        "type": "LineString",
+      },
+      "properties": Object {
+        "guideType": "tentative",
+      },
+      "type": "Feature",
+    },
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          1,
+          2,
+        ],
+        "type": "Point",
+      },
+      "properties": Object {
+        "editHandleType": "existing",
+        "featureIndex": -1,
+        "guideType": "editHandle",
+        "positionIndexes": Array [
+          0,
+        ],
+      },
+      "type": "Feature",
+    },
+  ],
+  "type": "FeatureCollection",
+}
+`;
+
+exports[`three clicks + pointer move + press Enter tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+  Object {
+    "position": Array [
+      4,
+      5,
+    ],
+    "text": "471.29 kilometers",
+  },
+  Object {
+    "position": Array [
+      6,
+      7,
+    ],
+    "text": "784.93 kilometers",
+  },
+]
+`;
+
+exports[`three clicks + pointer move + press Escape tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+  Object {
+    "position": Array [
+      4,
+      5,
+    ],
+    "text": "471.29 kilometers",
+  },
+]
+`;
+
+exports[`three clicks + pointer move tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+  Object {
+    "position": Array [
+      4,
+      5,
+    ],
+    "text": "471.29 kilometers",
+  },
+  Object {
+    "position": Array [
+      6,
+      7,
+    ],
+    "text": "784.93 kilometers",
+  },
+]
+`;
+
+exports[`two clicks + pointer move tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+  Object {
+    "position": Array [
+      4,
+      5,
+    ],
+    "text": "471.29 kilometers",
+  },
+]
+`;
+
+exports[`two clicks guides are two points + line string 1`] = `
+Object {
+  "features": Array [
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          Array [
+            1,
+            2,
+          ],
+          Array [
+            3,
+            4,
+          ],
+          Array [
+            3,
+            4,
+          ],
+        ],
+        "type": "LineString",
+      },
+      "properties": Object {
+        "guideType": "tentative",
+      },
+      "type": "Feature",
+    },
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          1,
+          2,
+        ],
+        "type": "Point",
+      },
+      "properties": Object {
+        "editHandleType": "existing",
+        "featureIndex": -1,
+        "guideType": "editHandle",
+        "positionIndexes": Array [
+          0,
+        ],
+      },
+      "type": "Feature",
+    },
+    Object {
+      "geometry": Object {
+        "coordinates": Array [
+          3,
+          4,
+        ],
+        "type": "Point",
+      },
+      "properties": Object {
+        "editHandleType": "existing",
+        "featureIndex": -1,
+        "guideType": "editHandle",
+        "positionIndexes": Array [
+          1,
+        ],
+      },
+      "type": "Feature",
+    },
+  ],
+  "type": "FeatureCollection",
+}
+`;
+
+exports[`two clicks tooltip contains distance 1`] = `
+Array [
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+  Object {
+    "position": Array [
+      3,
+      4,
+    ],
+    "text": "314.28 kilometers",
+  },
+]
+`;
