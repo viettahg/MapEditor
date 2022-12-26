@@ -12,9 +12,13 @@
     "@deck.gl/layers": "^8.8.17",
     "@deck.gl/mesh-layers": "^8.8.17",
     "@deck.gl/react": "^8.8.17",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.11.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-map-gl": "^5.2.1",
+    "redux-observable": "^2.0.0",
     "styled-components": "^4.3.2"
   },
   "devDependencies": {
