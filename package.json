@@ -15,11 +15,11 @@
   },
   "workspaces": [
     "modules/*",
-    "views/advanced"
+    "views/main"
   ],
   "scripts": {
     "start": "open http://nebula.gl/docs",
-    "start-example": "lerna run start-local --scope=example-advanced --stream",
+    "start-example": "lerna run start-local --scope=views-main --stream",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream",
     "prettier": "prettier --write \"{modules,examples,test,dev-docs,docs,website}/**/*.{ts,tsx,js,md}\"",

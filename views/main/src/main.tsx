@@ -4,10 +4,7 @@ import window from 'global/window';
 import * as React from 'react';
 import DeckGL from '@deck.gl/react';
 import { MapView, MapController, RGBAColor } from '@deck.gl/core';
-import { StaticMap } from 'react-map-gl';
 import GL from '@luma.gl/constants';
-import circle from '@turf/circle';
-
 import {TileLayer} from '@deck.gl/geo-layers';
 import {BitmapLayer} from '@deck.gl/layers';
 
@@ -15,45 +12,21 @@ import {
   EditableGeoJsonLayer,
   SelectionLayer,
   ModifyMode,
-  ResizeCircleMode,
   TranslateMode,
-  TransformMode,
-  ScaleMode,
-  RotateMode,
   DuplicateMode,
-  ExtendLineStringMode,
-  SplitPolygonMode,
-  ExtrudeMode,
   ElevationMode,
   DrawPointMode,
   DrawLineStringMode,
-  DrawPolygonMode,
-  DrawRectangleMode,
-  DrawSquareMode,
-  DrawRectangleFromCenterMode,
-  DrawSquareFromCenterMode,
-  DrawCircleByDiameterMode,
-  DrawCircleFromCenterMode,
-  DrawEllipseByBoundingBoxMode,
-  DrawEllipseUsingThreePointsMode,
-  DrawRectangleUsingThreePointsMode,
-  Draw90DegreePolygonMode,
   DrawPolygonByDraggingMode,
-  MeasureDistanceMode,
-  MeasureAreaMode,
-  MeasureAngleMode,
   ViewMode,
   CompositeMode,
   SnappableMode,
   ElevatedEditHandleLayer,
   PathMarkerLayer,
-  SELECTION_TYPE,
   GeoJsonEditMode,
 } from 'nebula.gl';
 
-import sampleGeoJson from '../../data/sample-geojson.json';
-
-import iconSheet from '../../data/edit-handles.png';
+import sampleGeoJson from './sample-geojson.json';
 
 import {
   Toolbox,
@@ -80,11 +53,11 @@ const styles = {
 const initialViewport = {
   bearing: 0,
   height: 0,
-  latitude: 37.76,
-  longitude: -122.44,
+  latitude: 34.92338332,
+  longitude: 137.21716002,
   pitch: 0,
   width: 0,
-  zoom: 11,
+  zoom: 15,
 };
 
 const ALL_MODES: any = [
@@ -92,12 +65,6 @@ const ALL_MODES: any = [
     category: 'View',
     modes: [
       { label: 'View', mode: ViewMode },
-      {
-        label: 'Measure Distance',
-        mode: MeasureDistanceMode,
-      },
-      { label: 'Measure Area', mode: MeasureAreaMode },
-      { label: 'Measure Angle', mode: MeasureAngleMode },
     ],
   },
   {
@@ -105,34 +72,12 @@ const ALL_MODES: any = [
     modes: [
       { label: 'Draw Point', mode: DrawPointMode },
       { label: 'Draw LineString', mode: DrawLineStringMode },
-      { label: 'Draw Polygon', mode: DrawPolygonMode },
-      { label: 'Draw 90° Polygon', mode: Draw90DegreePolygonMode },
-      { label: 'Draw Polygon By Dragging', mode: DrawPolygonByDraggingMode },
-      { label: 'Draw Rectangle', mode: DrawRectangleMode },
-      { label: 'Draw Rectangle From Center', mode: DrawRectangleFromCenterMode },
-      { label: 'Draw Rectangle Using 3 Points', mode: DrawRectangleUsingThreePointsMode },
-      { label: 'Draw Square', mode: DrawSquareMode },
-      { label: 'Draw Square From Center', mode: DrawSquareFromCenterMode },
-      { label: 'Draw Circle From Center', mode: DrawCircleFromCenterMode },
-      { label: 'Draw Circle By Diameter', mode: DrawCircleByDiameterMode },
-      { label: 'Draw Ellipse By Bounding Box', mode: DrawEllipseByBoundingBoxMode },
-      { label: 'Draw Ellipse Using 3 Points', mode: DrawEllipseUsingThreePointsMode },
     ],
   },
   {
     category: 'Alter',
     modes: [
       { label: 'Modify', mode: ModifyMode },
-      { label: 'Resize Circle', mode: ResizeCircleMode },
-      { label: 'Elevation', mode: ElevationMode },
-      { label: 'Translate', mode: new SnappableMode(new TranslateMode()) },
-      { label: 'Rotate', mode: RotateMode },
-      { label: 'Scale', mode: ScaleMode },
-      { label: 'Duplicate', mode: DuplicateMode },
-      { label: 'Extend LineString', mode: ExtendLineStringMode },
-      { label: 'Extrude', mode: ExtrudeMode },
-      { label: 'Split', mode: SplitPolygonMode },
-      { label: 'Transform', mode: new SnappableMode(new TransformMode()) },
     ],
   },
   {
@@ -140,36 +85,6 @@ const ALL_MODES: any = [
     modes: [{ label: 'Draw LineString + Modify', mode: COMPOSITE_MODE }],
   },
 ];
-
-const POLYGON_DRAWING_MODES = [
-  DrawPolygonMode,
-  Draw90DegreePolygonMode,
-  DrawPolygonByDraggingMode,
-  DrawRectangleMode,
-  DrawRectangleFromCenterMode,
-  DrawRectangleUsingThreePointsMode,
-  DrawSquareMode,
-  DrawSquareFromCenterMode,
-  DrawCircleFromCenterMode,
-  DrawCircleByDiameterMode,
-  DrawEllipseByBoundingBoxMode,
-  DrawEllipseUsingThreePointsMode,
-];
-
-const TWO_CLICK_POLYGON_MODES = [
-  DrawRectangleMode,
-  DrawSquareMode,
-  DrawRectangleFromCenterMode,
-  DrawSquareFromCenterMode,
-  DrawCircleFromCenterMode,
-  DrawCircleByDiameterMode,
-  DrawEllipseByBoundingBoxMode,
-];
-
-const EMPTY_FEATURE_COLLECTION = {
-  type: 'FeatureCollection',
-  features: [],
-};
 
 const layer = new TileLayer({
   // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
@@ -238,7 +153,7 @@ function getEditHandleColor(handle: {}): RGBAColor {
   }
 }
 
-export default class Example extends React.Component<
+export default class MainScreen extends React.Component<
   {},
   {
     viewport: Record<string, any>;
@@ -264,7 +179,7 @@ export default class Example extends React.Component<
     this.state = {
       viewport: initialViewport,
       testFeatures: sampleGeoJson,
-      mode: DrawPolygonMode,
+      mode: ViewMode,
       modeConfig: null,
       pointsRemovable: true,
       selectedFeatureIndexes: [],
@@ -292,15 +207,25 @@ export default class Example extends React.Component<
 
   _onLayerClick = (info: any) => {
     console.log('onLayerClick', info); // eslint-disable-line
-    if (this.state.mode !== ViewMode || this.state.selectionTool) {
-      // don't change selection while editing
-      return;
-    }
 
     if (info) {
       console.log(`select editing feature ${info.index}`); // eslint-disable-line
       // a feature was clicked
-      this.setState({ selectedFeatureIndexes: [info.index] });
+      if (info.index < 0) {
+        this.setState(
+          { 
+            mode: ViewMode,
+            selectedFeatureIndexes: [] 
+          }
+        );      
+      }else {
+        this.setState(
+          { 
+            mode: ModifyMode,
+            selectedFeatureIndexes: [info.index] 
+          }
+        );
+      }
     } else {
       console.log('deselect editing feature'); // eslint-disable-line
       // open space was clicked, so stop editing
@@ -310,98 +235,6 @@ export default class Example extends React.Component<
 
   _resize = () => {
     this.forceUpdate();
-  };
-
-  _loadSample = (type: string) => {
-    if (type === 'mixed') {
-      this.setState({
-        testFeatures: sampleGeoJson,
-        selectedFeatureIndexes: [],
-      });
-    } else if (type === 'complex') {
-      this.setState({
-        testFeatures: {
-          type: 'FeatureCollection',
-          features: [
-            circle([-122.45, 37.81], 4, { steps: 5000 }),
-            circle([-122.33, 37.81], 4, { steps: 5000 }),
-            circle([-122.45, 37.73], 4, { steps: 5000 }),
-            circle([-122.33, 37.73], 4, { steps: 5000 }),
-          ],
-        },
-        selectedFeatureIndexes: [],
-      });
-    } else if (type === 'blank') {
-      this.setState({
-        testFeatures: EMPTY_FEATURE_COLLECTION,
-        selectedFeatureIndexes: [],
-      });
-    } else if (type === 'file') {
-      const el = document.createElement('input');
-      el.type = 'file';
-      el.onchange = (e) => {
-        const eventTarget = e.target as HTMLInputElement;
-        if (eventTarget.files && eventTarget.files[0]) {
-          const reader = new FileReader();
-          reader.onload = ({ target }) => {
-            this._parseStringJson(target.result as string);
-          };
-          reader.readAsText(eventTarget.files[0]);
-        }
-      };
-      el.click();
-    }
-  };
-
-  _copy = () => {
-    if (navigator && navigator.clipboard) {
-      navigator.clipboard.writeText(JSON.stringify(this.state.testFeatures));
-    } else {
-      this._error('No navigator.clipboard');
-    }
-  };
-
-  _paste = () => {
-    if (navigator && navigator.clipboard) {
-      navigator.clipboard.readText().then(
-        (value) => {
-          this._parseStringJson(value);
-        },
-        (reason) => {
-          this._error(reason);
-        }
-      );
-    } else {
-      this._error('No navigator.clipboard');
-    }
-  };
-
-  _download = () => {
-    const blob = new Blob([JSON.stringify(this.state.testFeatures)], {
-      type: 'octet/stream',
-    });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'nebula.geojson';
-    a.click();
-  };
-
-  _parseStringJson = (json: string) => {
-    let testFeatures = null;
-    try {
-      testFeatures = JSON.parse(json);
-      if (Array.isArray(testFeatures)) {
-        testFeatures = {
-          type: 'FeatureCollection',
-          features: testFeatures,
-        };
-      }
-      // eslint-disable-next-line
-      console.log('Loaded JSON:', testFeatures);
-      this.setState({ testFeatures });
-    } catch (err) {
-      this._error(err);
-    }
   };
 
   _error = (err: any) => {
@@ -483,225 +316,6 @@ export default class Example extends React.Component<
     return checkboxes;
   }
 
-  _renderBooleanOperationControls() {
-    const operations = ['union', 'difference', 'intersection'];
-    return (
-      <ToolboxRow key="booleanOperations">
-        <ToolboxTitle>
-          Boolean operation
-          <br />
-          (requires single selection)
-        </ToolboxTitle>
-        <ToolboxControl>
-          {operations.map((operation) => (
-            <ToolboxButton
-              key={operation}
-              selected={
-                this.state.modeConfig && this.state.modeConfig.booleanOperation === operation
-              }
-              onClick={() => {
-                if (this.state.modeConfig && this.state.modeConfig.booleanOperation === operation) {
-                  this.setState({
-                    modeConfig: {
-                      ...(this.state.modeConfig || {}),
-                      booleanOperation: null,
-                    },
-                  });
-                } else {
-                  this.setState({
-                    modeConfig: {
-                      ...(this.state.modeConfig || {}),
-                      booleanOperation: operation,
-                    },
-                  });
-                }
-              }}
-            >
-              {operation}
-            </ToolboxButton>
-          ))}
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderTwoClickPolygonControls() {
-    return (
-      <ToolboxRow key="twoClick">
-        <ToolboxTitle>Drag to draw</ToolboxTitle>
-        <ToolboxControl>
-          <input
-            type="checkbox"
-            checked={Boolean(this.state.modeConfig && this.state.modeConfig.dragToDraw)}
-            onChange={(event) =>
-              this.setState({
-                modeConfig: {
-                  ...(this.state.modeConfig || {}),
-                  dragToDraw: Boolean(event.target.checked),
-                },
-              })
-            }
-          />
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderModifyModeControls() {
-    return (
-      <ToolboxRow key="modify">
-        <ToolboxTitle>Allow removing points</ToolboxTitle>
-        <ToolboxControl>
-          <input
-            type="checkbox"
-            checked={this.state.pointsRemovable}
-            onChange={() => this.setState({ pointsRemovable: !this.state.pointsRemovable })}
-          />
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderSplitModeControls() {
-    return (
-      <ToolboxRow key="split">
-        <ToolboxTitle>Constrain to 90&deg;</ToolboxTitle>
-        <ToolboxControl>
-          <input
-            type="checkbox"
-            checked={Boolean(this.state.modeConfig && this.state.modeConfig.lock90Degree)}
-            onChange={(event) =>
-              this.setState({
-                modeConfig: { lock90Degree: Boolean(event.target.checked) },
-              })
-            }
-          />
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderSnappingControls() {
-    return (
-      <div key="snap">
-        <ToolboxRow>
-          <ToolboxTitle>Enable snapping</ToolboxTitle>
-          <ToolboxControl>
-            <input
-              type="checkbox"
-              checked={Boolean(this.state.modeConfig && this.state.modeConfig.enableSnapping)}
-              onChange={(event) => {
-                const modeConfig = {
-                  ...this.state.modeConfig,
-                  enableSnapping: Boolean(event.target.checked),
-                };
-                this.setState({ modeConfig });
-              }}
-            />
-          </ToolboxControl>
-        </ToolboxRow>
-      </div>
-    );
-  }
-
-  _renderMeasureDistanceControls() {
-    return (
-      <ToolboxRow key="measure-distance">
-        <ToolboxTitle>Units</ToolboxTitle>
-        <ToolboxControl>
-          <select
-            value={
-              (this.state.modeConfig &&
-                this.state.modeConfig.turfOptions &&
-                this.state.modeConfig.turfOptions.units) ||
-              'kilometers'
-            }
-            onChange={(event) => {
-              const modeConfig = {
-                ...this.state.modeConfig,
-                turfOptions: { units: event.target.value },
-              };
-              this.setState({ modeConfig });
-            }}
-          >
-            <option value="kilometers">kilometers</option>
-            <option value="miles">miles</option>
-            <option value="degrees">degrees</option>
-            <option value="radians">radians</option>
-          </select>
-        </ToolboxControl>
-
-        <ToolboxTitle>Center Tooltips on Line</ToolboxTitle>
-        <ToolboxControl>
-          <input
-            type="checkbox"
-            checked={Boolean(this.state.modeConfig && this.state.modeConfig.centerTooltipsOnLine)}
-            onChange={(event) => {
-              const modeConfig = {
-                ...this.state.modeConfig,
-                centerTooltipsOnLine: Boolean(event.target.checked),
-              };
-              this.setState({ modeConfig });
-            }}
-          />
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderDrawPolygonModeControls() {
-    return (
-      <ToolboxRow key="draw-polygon">
-        <ToolboxTitle>Prevent overlapping lines</ToolboxTitle>
-        <ToolboxControl>
-          <input
-            type="checkbox"
-            checked={Boolean(
-              this.state.modeConfig && this.state.modeConfig.preventOverlappingLines
-            )}
-            onChange={(event) =>
-              this.setState({
-                modeConfig: {
-                  ...(this.state.modeConfig || {}),
-                  preventOverlappingLines: Boolean(event.target.checked),
-                },
-              })
-            }
-          />
-        </ToolboxControl>
-      </ToolboxRow>
-    );
-  }
-
-  _renderModeConfigControls() {
-    const controls = [];
-
-    if (POLYGON_DRAWING_MODES.indexOf(this.state.mode) > -1) {
-      controls.push(this._renderBooleanOperationControls());
-    }
-    // @ts-ignore
-    if (TWO_CLICK_POLYGON_MODES.indexOf(this.state.mode) > -1) {
-      controls.push(this._renderTwoClickPolygonControls());
-    }
-    if (this.state.mode === ModifyMode) {
-      controls.push(this._renderModifyModeControls());
-    }
-    if (this.state.mode === SplitPolygonMode) {
-      controls.push(this._renderSplitModeControls());
-    }
-    if (this.state.mode instanceof SnappableMode) {
-      controls.push(this._renderSnappingControls());
-    }
-    if (this.state.mode === MeasureDistanceMode) {
-      controls.push(this._renderMeasureDistanceControls());
-    }
-    if (this.state.mode === DrawPolygonMode) {
-      controls.push(this._renderDrawPolygonModeControls());
-    }
-
-    return controls;
-  }
-
   _renderToolBox() {
     return (
       <Toolbox>
@@ -721,7 +335,6 @@ export default class Example extends React.Component<
             ))}
           </ToolboxRow>
         ))}
-        {this._renderModeConfigControls()}
         {this.state.showGeoJson && (
           <React.Fragment>
             <ToolboxTitle>GeoJSON</ToolboxTitle>
@@ -741,119 +354,9 @@ export default class Example extends React.Component<
             </ToolboxControl>
           </React.Fragment>
         )}
-        {!this.state.showGeoJson && (
-          <React.Fragment>
-            <ToolboxTitle>GeoJSON</ToolboxTitle>
-            <ToolboxButton onClick={() => this.setState({ showGeoJson: !this.state.showGeoJson })}>
-              show &#9660;
-            </ToolboxButton>
-          </React.Fragment>
-        )}
-        <ToolboxButton onClick={() => this._copy()}>Copy</ToolboxButton>
-        <ToolboxButton onClick={() => this._paste()}>Paste</ToolboxButton>
-        <ToolboxButton onClick={() => this._download()}>Download</ToolboxButton>
-        <ToolboxRow>
-          <ToolboxTitle>Load data</ToolboxTitle>
-          <ToolboxControl>
-            <ToolboxButton onClick={() => this._loadSample('mixed')}>Mixed Sample</ToolboxButton>
-            <ToolboxButton onClick={() => this._loadSample('complex')}>
-              Complex Sample
-            </ToolboxButton>
-            <ToolboxButton onClick={() => this._loadSample('blank')}>Blank</ToolboxButton>
-            <ToolboxButton onClick={() => this._loadSample('file')}>Open file...</ToolboxButton>
-          </ToolboxControl>
-        </ToolboxRow>
-
-        <ToolboxRow>
-          <ToolboxTitle>Options</ToolboxTitle>
-          <ToolboxControl>
-            <ToolboxCheckbox
-              type="checkbox"
-              checked={this.state.editHandleType === 'icon'}
-              onChange={() =>
-                this.setState({
-                  editHandleType: this.state.editHandleType === 'icon' ? 'point' : 'icon',
-                })
-              }
-            >
-              Use Icons
-            </ToolboxCheckbox>
-          </ToolboxControl>
-
-          <ToolboxControl>
-            <ToolboxCheckbox
-              type="checkbox"
-              checked={this.state.editHandleType === 'elevated'}
-              onChange={() =>
-                this.setState({
-                  editHandleType: this.state.editHandleType === 'elevated' ? 'point' : 'elevated',
-                })
-              }
-            >
-              Use ElevatedEditHandleLayer
-            </ToolboxCheckbox>
-          </ToolboxControl>
-
-          <ToolboxControl>
-            <ToolboxCheckbox
-              type="checkbox"
-              checked={this.state.pathMarkerLayer}
-              onChange={() =>
-                this.setState({
-                  pathMarkerLayer: !this.state.pathMarkerLayer,
-                })
-              }
-            >
-              Use PathMarkerLayer
-            </ToolboxCheckbox>
-          </ToolboxControl>
-        </ToolboxRow>
-
-        <ToolboxRow>
-          <ToolboxTitle>Select Features</ToolboxTitle>
-          <ToolboxControl>
-            <ToolboxButton
-              onClick={() =>
-                this.setState({
-                  selectedFeatureIndexes: [],
-                  selectionTool: SELECTION_TYPE.NONE,
-                })
-              }
-            >
-              Clear Selection
-            </ToolboxButton>
-            <ToolboxButton
-              onClick={() =>
-                this.setState({
-                  mode: ViewMode,
-                  selectionTool: SELECTION_TYPE.RECTANGLE,
-                })
-              }
-            >
-              Rect Select
-            </ToolboxButton>
-            <ToolboxButton
-              onClick={() =>
-                this.setState({
-                  mode: ViewMode,
-                  selectionTool: SELECTION_TYPE.POLYGON,
-                })
-              }
-            >
-              Lasso Select
-            </ToolboxButton>
-          </ToolboxControl>
-        </ToolboxRow>
         <ToolboxTitle>Features</ToolboxTitle>
         <ToolboxRow>{this._renderSelectFeatureCheckboxes()}</ToolboxRow>
       </Toolbox>
-    );
-  }
-
-  renderStaticMap(viewport: Record<string, any>) {
-    return (
-      // @ts-ignore
-      <StaticMap {...viewport} mapStyle={'mapbox://styles/mapbox/dark-v10'} />
     );
   }
 
@@ -1043,8 +546,6 @@ export default class Example extends React.Component<
 
       editHandleType: this.state.editHandleType,
 
-      // test using icons for edit handles
-      editHandleIconAtlas: iconSheet,
       editHandleIconMapping: {
         intermediate: {
           x: 0,

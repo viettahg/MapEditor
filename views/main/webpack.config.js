@@ -12,20 +12,28 @@ const CONFIG = {
   devtool: 'source-map',
 
   entry: {
-    app: resolve('./app.js'),
+    app: resolve('./src/app.tsx'),
   },
-
+  resolve: {
+    // Add '.ts' and '.tsx' as resolvable extensions.
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
+  stats: 'minimal',
   module: {
     rules: [
       {
         // Compile ES2015 using babel
-        test: /\.js$/,
+        test: /\.tsx?$/,
         include: [resolve('.'), resolve('../../modules')],
         exclude: [/node_modules/],
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [require('@babel/preset-env'), require('@babel/preset-react')],
+            presets: [
+              require('@babel/preset-env'),
+              require('@babel/preset-react'),
+              require('@babel/preset-typescript'),
+            ],
             plugins: [
               require('@babel/plugin-proposal-class-properties'),
               require('@babel/plugin-proposal-export-default-from'),
@@ -55,8 +63,8 @@ const CONFIG = {
 
   // Optional: Enables reading mapbox token from environment variable
   plugins: [
-    new HtmlWebpackPlugin({ title: 'nebula.gl' }),
-    new webpack.EnvironmentPlugin(['MapboxAccessToken']),
+    new HtmlWebpackPlugin({ title: 'Map Editor' }),
+    // new webpack.EnvironmentPlugin(['']),
   ],
 };
 
