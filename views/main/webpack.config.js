@@ -12,7 +12,7 @@ const CONFIG = {
   devtool: 'source-map',
 
   entry: {
-    app: resolve('./src/app.tsx'),
+    app: resolve('./src/index.tsx'),
   },
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
