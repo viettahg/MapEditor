@@ -1,12 +1,14 @@
 /* eslint-env browser */
 
 import window from 'global/window';
-import * as React from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+
 import DeckGL from '@deck.gl/react';
 import { MapView, MapController, RGBAColor } from '@deck.gl/core';
 import GL from '@luma.gl/constants';
-import {TileLayer} from '@deck.gl/geo-layers';
-import {BitmapLayer} from '@deck.gl/layers';
+import { TileLayer } from '@deck.gl/geo-layers';
+import { BitmapLayer } from '@deck.gl/layers';
 
 import {
   EditableGeoJsonLayer,
@@ -35,6 +37,11 @@ import {
   ToolboxButton,
   ToolboxCheckbox,
 } from './toolbox';
+
+
+import { IStore } from './store';
+import { GetTasks } from './store/actions/tasks.actions';
+
 
 const COMPOSITE_MODE = new CompositeMode([new DrawLineStringMode(), new ModifyMode()]);
 
@@ -95,7 +102,7 @@ const layer = new TileLayer({
 
   renderSubLayers: props => {
     const {
-      bbox: {west, south, east, north}
+      bbox: { west, south, east, north }
     } = props.tile;
 
     return new BitmapLayer(props, {
@@ -152,8 +159,14 @@ function getEditHandleColor(handle: {}): RGBAColor {
   }
 }
 
-export default class App extends React.Component<
-  {},
+interface IAppProps {
+  getTodos(): void;
+  tasks: [];
+  isLoading: boolean;
+}
+
+
+class App extends React.Component<IAppProps,
   {
     viewport: Record<string, any>;
     testFeatures: any;
@@ -172,7 +185,7 @@ export default class App extends React.Component<
     };
   }
 > {
-  constructor(props: {}) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -188,10 +201,15 @@ export default class App extends React.Component<
       pathMarkerLayer: false,
       featureMenu: null,
     };
+    
+    
+    
   }
+
 
   componentDidMount() {
     window.addEventListener('resize', this._resize);
+    this.props.getTodos();
   }
 
   componentWillUnmount() {
@@ -205,6 +223,7 @@ export default class App extends React.Component<
   };
 
   _onLayerClick = (info: any) => {
+    // const {getTodos} = this.props;
     console.log('onLayerClick', info); // eslint-disable-line
 
     if (info) {
@@ -212,16 +231,16 @@ export default class App extends React.Component<
       // a feature was clicked
       if (info.index < 0) {
         this.setState(
-          { 
+          {
             mode: ViewMode,
-            selectedFeatureIndexes: [] 
+            selectedFeatureIndexes: []
           }
-        );      
-      }else {
+        );
+      } else {
         this.setState(
-          { 
+          {
             mode: ModifyMode,
-            selectedFeatureIndexes: [info.index] 
+            selectedFeatureIndexes: [info.index]
           }
         );
       }
@@ -359,7 +378,7 @@ export default class App extends React.Component<
   }
 
 
-  customizeLayers(layers: Record<string, any>[]) {}
+  customizeLayers(layers: Record<string, any>[]) { }
 
   onEdit = ({ updatedData, editType, editContext }) => {
     let updatedSelectedFeatureIndexes = this.state.selectedFeatureIndexes;
@@ -406,6 +425,8 @@ export default class App extends React.Component<
   render() {
     const { testFeatures, selectedFeatureIndexes, mode } = this.state;
     let { modeConfig } = this.state;
+    const { tasks, isLoading } = this.props;
+    console.log('isLoading ', isLoading, tasks.length)
 
     const viewport: Record<string, any> = {
       ...this.state.viewport,
@@ -603,3 +624,20 @@ function getPositionCount(geometry): number {
       throw Error(`Unknown geometry type: ${type}`);
   }
 }
+
+const mapStateToProps = (state: IStore) => ({
+  tasks: state.tasks.tasks, 
+  isLoading:state.tasks.isLoading
+});
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getTodos: () => dispatch({ type: GetTasks.Pending }),
+  }
+}
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

@@ -58,6 +58,11 @@ const CONFIG = {
         include: /node_modules/,
         type: 'javascript/auto',
       },
+      // CSS rules
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
 
