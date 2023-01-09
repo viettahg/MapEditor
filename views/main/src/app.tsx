@@ -226,6 +226,11 @@ class App extends React.Component<IAppProps,
     // const {getTodos} = this.props;
     console.log('onLayerClick', info); // eslint-disable-line
 
+    if (this.state.mode !== ViewMode || this.state.selectionTool) {
+      // don't change selection while editing
+      return;
+    }
+
     if (info) {
       console.log(`select editing feature ${info.index}`); // eslint-disable-line
       // a feature was clicked
